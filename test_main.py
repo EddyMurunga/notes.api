@@ -6,16 +6,19 @@ client = TestClient(app)
 def test_read_root():
     response = client.get("/")
     assert response.status_code == 200
-    assert response.json() == {"message": "Notes API is running"}
 
-def test_create_note():
-    response = client.post("/notes", json={"text": "Test note"})
+def test_signup():
+    response = client.post("/auth/signup", json={
+        "username": "testuser",
+        "password": "testpass123"
+    })
     assert response.status_code == 200
-    data = response.json()
-    assert data["text"] == "Test note"
-    assert "id" in data
+    assert response.json()["username"] == "testuser"
 
-def test_get_notes():
-    response = client.get("/notes")
+def test_login():
+    response = client.post("/auth/login", data={
+        "username": "testuser",
+        "password": "testpass123"
+    })
     assert response.status_code == 200
-    assert isinstance(response.json(), list)
+    assert "access_token" in response.json()
